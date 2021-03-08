@@ -1,27 +1,36 @@
+var pg;
 var myShader;
 var gui = new dat.GUI();
 var params = {
-    Blue: 0,
+    Ellipse_Size: 30,
     Download_Image: function () { return save(); },
 };
-gui.add(params, "Blue", 0, 1, 0.1);
+gui.add(params, "Ellipse_Size", 0, 100, 1);
 gui.add(params, "Download_Image");
 function draw() {
-    translate(-width / 2, -height / 2);
-    shader(myShader);
-    myShader.setUniform("uAspectRatio", width / height);
-    myShader.setUniform("uBlue", params.Blue);
-    noStroke();
-    rect(0, 0, width, height);
+    randomSeed(0);
+    background(0, 255, 2);
+    for (var i = 0; i < 100; ++i) {
+        fill(random(255), random(255), random(255));
+        ellipse(random(width), random(height), 100);
+    }
+    pg.background(200);
+    pg.noStroke();
+    pg.fill(0);
+    pg.shader(myShader);
+    pg.triangle(100, 100, 500, 300, 800, 100);
+    image(pg, 0, 0, width, height);
 }
 function preload() {
     myShader = loadShader("shader/myShader.vert", "shader/myShader.frag");
 }
 function setup() {
     p6_CreateCanvas();
+    pg = createGraphics(width, height, WEBGL);
 }
 function windowResized() {
     p6_ResizeCanvas();
+    pg.resizeCanvas(width, height);
 }
 var __ASPECT_RATIO = 1;
 var __MARGIN_SIZE = 25;
@@ -48,7 +57,7 @@ function __centerCanvas() {
     __canvas.position((windowWidth - width) / 2, (windowHeight - height) / 2);
 }
 function p6_CreateCanvas() {
-    __canvas = createCanvas(__desiredCanvasWidth(), __desiredCanvasHeight(), WEBGL);
+    __canvas = createCanvas(__desiredCanvasWidth(), __desiredCanvasHeight());
     __centerCanvas();
 }
 function p6_ResizeCanvas() {
